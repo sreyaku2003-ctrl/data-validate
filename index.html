@@ -1,0 +1,1023 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Document & Photo Verification</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background-color: #f8fafc;
+      color: #1e293b;
+      min-height: 100vh;
+      padding: 2.5rem 1.5rem 4rem;
+    }
+
+    .page-container {
+      max-width: 1050px;
+      margin: 0 auto;
+    }
+
+    /* Page Header */
+    .page-header {
+      margin-bottom: 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .page-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #0f172a;
+      letter-spacing: -0.01em;
+    }
+
+    .page-subtitle {
+      font-size: 0.9rem;
+      color: #64748b;
+      margin-top: 4px;
+    }
+
+    .preset-toolbar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .toolbar-label {
+      font-size: 0.8rem;
+      color: #64748b;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .btn-quick-fill {
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      padding: 6px 12px;
+      font-size: 0.82rem;
+      font-weight: 500;
+      color: #475569;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+    }
+
+    .btn-quick-fill:hover {
+      background: #f1f5f9;
+      color: #0f172a;
+      border-color: #94a3b8;
+    }
+
+    .btn-quick-fill.accent {
+      background: #ede9fe;
+      border-color: #c4b5fd;
+      color: #6d28d9;
+      font-weight: 600;
+    }
+
+    .btn-quick-fill.accent:hover {
+      background: #ddd6fe;
+    }
+
+    /* Table Card */
+    .table-card {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+    }
+
+    .docs-table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+    }
+
+    /* Table Header */
+    .docs-table thead th {
+      background-color: #f1f5f9;
+      color: #475569;
+      font-size: 0.88rem;
+      font-weight: 600;
+      padding: 1rem 1.75rem;
+      border-bottom: 1px solid #e2e8f0;
+      letter-spacing: 0.02em;
+    }
+
+    .docs-table thead th:nth-child(1) { width: 28%; }
+    .docs-table thead th:nth-child(2) { width: 30%; }
+    .docs-table thead th:nth-child(3) { width: 22%; }
+    .docs-table thead th:nth-child(4) { width: 20%; }
+
+    /* Table Rows - Exact warm cream background from user screenshot */
+    .docs-table tbody tr {
+      background-color: #fffef5;
+      border-bottom: 1px solid #f1f5f9;
+      transition: background-color 0.15s ease;
+    }
+
+    .docs-table tbody tr:last-child {
+      border-bottom: none;
+    }
+
+    .docs-table tbody tr:hover {
+      background-color: #fffdf0;
+    }
+
+    .docs-table td {
+      padding: 1.25rem 1.75rem;
+      vertical-align: middle;
+    }
+
+    /* Column 1: Document Name */
+    .doc-name-cell {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .doc-title {
+      font-size: 1rem;
+      font-weight: 600;
+      color: #0f172a;
+    }
+
+    .doc-type-hint {
+      font-size: 0.75rem;
+      color: #94a3b8;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    /* Column 2: Status */
+    .status-cell {
+      font-size: 0.92rem;
+    }
+
+    .status-not-uploaded {
+      color: #64748b;
+      font-weight: 500;
+    }
+
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 12px;
+      border-radius: 9999px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      line-height: 1.3;
+    }
+
+    .status-badge.approved {
+      background-color: #ecfdf5;
+      color: #059669;
+      border: 1px solid #a7f3d0;
+    }
+
+    .status-badge.rejected {
+      background-color: #fef2f2;
+      color: #dc2626;
+      border: 1px solid #fecaca;
+    }
+
+    .status-badge.loading {
+      background-color: #f8fafc;
+      color: #64748b;
+      border: 1px solid #e2e8f0;
+    }
+
+    .status-message {
+      font-size: 0.78rem;
+      color: #64748b;
+      margin-top: 6px;
+      line-height: 1.4;
+      max-width: 280px;
+    }
+
+    .status-message.error {
+      color: #b91c1c;
+    }
+
+    .status-message.success {
+      color: #047857;
+    }
+
+    /* Column 3: Upload Box - Rounded dashed card with purple cloud icon */
+    .upload-box {
+      width: 140px;
+      height: 72px;
+      background: #ffffff;
+      border: 1.5px dashed #c4b5fd;
+      border-radius: 14px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .upload-box:hover, .upload-box.dragover {
+      border-color: #7c3aed;
+      background: #fbf9ff;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(124, 58, 237, 0.08);
+    }
+
+    .upload-icon {
+      width: 24px;
+      height: 24px;
+      color: #7c3aed;
+      margin-bottom: 4px;
+      transition: transform 0.2s ease;
+    }
+
+    .upload-box:hover .upload-icon {
+      transform: translateY(-2px);
+    }
+
+    .upload-text {
+      font-size: 0.75rem;
+      font-weight: 500;
+      color: #475569;
+    }
+
+    /* Thumbnail Preview after upload */
+    .preview-box {
+      display: none;
+      width: 100%;
+      height: 100%;
+      position: absolute;
+      top: 0;
+      left: 0;
+      background: #ffffff;
+    }
+
+    .preview-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .preview-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(15, 23, 42, 0.6);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #ffffff;
+      font-size: 0.72rem;
+      font-weight: 600;
+      opacity: 0;
+      transition: opacity 0.2s ease;
+    }
+
+    .upload-box:hover .preview-overlay {
+      opacity: 1;
+    }
+
+    /* Column 4: Actions */
+    .actions-cell {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .action-btn {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      padding: 6px 10px;
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: #475569;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      transition: all 0.15s ease;
+    }
+
+    .action-btn:hover {
+      background: #f8fafc;
+      color: #0f172a;
+      border-color: #cbd5e1;
+    }
+
+    .action-btn.btn-danger:hover {
+      background: #fef2f2;
+      color: #dc2626;
+      border-color: #fecaca;
+    }
+
+    .action-btn.btn-inspect {
+      color: #6d28d9;
+      border-color: #ddd6fe;
+      background: #fbf9ff;
+    }
+
+    .action-btn.btn-inspect:hover {
+      background: #ede9fe;
+    }
+
+    .empty-actions-dash {
+      color: #cbd5e1;
+      font-size: 1.1rem;
+      padding-left: 8px;
+    }
+
+    /* Modal for Inspection / Preview */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(15, 23, 42, 0.6);
+      backdrop-filter: blur(4px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 999;
+      padding: 1rem;
+    }
+
+    .modal-dialog {
+      background: #ffffff;
+      border-radius: 16px;
+      max-width: 540px;
+      width: 100%;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+      overflow: hidden;
+      animation: modalFadeIn 0.2s ease;
+    }
+
+    @keyframes modalFadeIn {
+      from { opacity: 0; transform: scale(0.95); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    .modal-header {
+      padding: 1.25rem 1.5rem;
+      border-bottom: 1px solid #e2e8f0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .modal-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #0f172a;
+    }
+
+    .modal-close {
+      background: none;
+      border: none;
+      font-size: 1.25rem;
+      color: #94a3b8;
+      cursor: pointer;
+    }
+
+    .modal-close:hover { color: #0f172a; }
+
+    .modal-body {
+      padding: 1.5rem;
+      max-height: 80vh;
+      overflow-y: auto;
+    }
+
+    .metric-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin: 1rem 0;
+    }
+
+    .metric-card {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      padding: 10px 14px;
+    }
+
+    .metric-card-label {
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: #64748b;
+      text-transform: uppercase;
+    }
+
+    .metric-card-val {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: #0f172a;
+      margin-top: 2px;
+      font-family: monospace;
+    }
+
+    .modal-image-preview {
+      width: 100%;
+      max-height: 280px;
+      object-fit: contain;
+      border-radius: 8px;
+      background: #0f172a;
+      margin-bottom: 1rem;
+    }
+
+    /* Hidden file inputs */
+    .hidden-input {
+      display: none;
+    }
+
+    /* Bottom Summary Bar */
+    .summary-card {
+      margin-top: 1.5rem;
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 1rem 1.75rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .summary-text {
+      font-size: 0.9rem;
+      color: #475569;
+    }
+
+    .summary-text strong {
+      color: #0f172a;
+    }
+
+    .btn-submit {
+      background: #7c3aed;
+      color: #ffffff;
+      border: none;
+      border-radius: 8px;
+      padding: 10px 20px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color 0.2s ease;
+    }
+
+    .btn-submit:hover {
+      background: #6d28d9;
+    }
+  </style>
+</head>
+<body>
+  <div class="page-container">
+    
+    <!-- Top Header -->
+    <div class="page-header">
+      <div>
+        <h1 class="page-title">Document & Photo Verification</h1>
+        <p class="page-subtitle">Upload family photos and signatures to verify validity.</p>
+      </div>
+
+      <div class="preset-toolbar">
+        <span class="toolbar-label">Quick Test:</span>
+        <button class="btn-quick-fill accent" onclick="quickFillAllValid()">Auto-fill All Valid</button>
+        <button class="btn-quick-fill" onclick="quickFillRejectionTest()">Test Wrong Uploads</button>
+        <button class="btn-quick-fill" onclick="resetAllFields()">Reset</button>
+      </div>
+    </div>
+
+    <!-- Main Table Card -->
+    <div class="table-card">
+      <table class="docs-table">
+        <thead>
+          <tr>
+            <th>Document Name</th>
+            <th>Status</th>
+            <th>Upload</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+
+          <!-- ROW 1: Father Photo -->
+          <tr id="row_father_photo">
+            <td>
+              <div class="doc-name-cell">
+                <span class="doc-title">Father Photo</span>
+                <span class="doc-type-hint">Required: Person Photo</span>
+              </div>
+            </td>
+            <td>
+              <div class="status-cell" id="status_father_photo">
+                <span class="status-not-uploaded">Not Uploaded</span>
+              </div>
+            </td>
+            <td>
+              <div class="upload-box" id="box_father_photo" onclick="triggerFileSelect('father_photo')">
+                <svg class="upload-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"></path>
+                  <path d="M12 13v6"></path>
+                  <path d="m9 16 3 3 3-3"></path>
+                </svg>
+                <span class="upload-text">Click to upload</span>
+                <div class="preview-box" id="prevbox_father_photo">
+                  <img class="preview-img" id="img_father_photo" alt="Father Photo" />
+                  <div class="preview-overlay">Replace</div>
+                </div>
+              </div>
+              <input type="file" id="file_father_photo" class="hidden-input" accept="image/jpeg,image/png,image/webp" onchange="onFileChosen(event, 'father_photo', 'person')" />
+            </td>
+            <td>
+              <div class="actions-cell" id="actions_father_photo">
+                <span class="empty-actions-dash">—</span>
+              </div>
+            </td>
+          </tr>
+
+          <!-- ROW 2: Father Signature -->
+          <tr id="row_father_sig">
+            <td>
+              <div class="doc-name-cell">
+                <span class="doc-title">Father Signature</span>
+                <span class="doc-type-hint">Required: Signature</span>
+              </div>
+            </td>
+            <td>
+              <div class="status-cell" id="status_father_sig">
+                <span class="status-not-uploaded">Not Uploaded</span>
+              </div>
+            </td>
+            <td>
+              <div class="upload-box" id="box_father_sig" onclick="triggerFileSelect('father_sig')">
+                <svg class="upload-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"></path>
+                  <path d="M12 13v6"></path>
+                  <path d="m9 16 3 3 3-3"></path>
+                </svg>
+                <span class="upload-text">Click to upload</span>
+                <div class="preview-box" id="prevbox_father_sig">
+                  <img class="preview-img" id="img_father_sig" alt="Father Signature" />
+                  <div class="preview-overlay">Replace</div>
+                </div>
+              </div>
+              <input type="file" id="file_father_sig" class="hidden-input" accept="image/jpeg,image/png,image/webp" onchange="onFileChosen(event, 'father_sig', 'signature')" />
+            </td>
+            <td>
+              <div class="actions-cell" id="actions_father_sig">
+                <span class="empty-actions-dash">—</span>
+              </div>
+            </td>
+          </tr>
+
+          <!-- ROW 3: Mother Photo -->
+          <tr id="row_mother_photo">
+            <td>
+              <div class="doc-name-cell">
+                <span class="doc-title">Mother Photo</span>
+                <span class="doc-type-hint">Required: Person Photo</span>
+              </div>
+            </td>
+            <td>
+              <div class="status-cell" id="status_mother_photo">
+                <span class="status-not-uploaded">Not Uploaded</span>
+              </div>
+            </td>
+            <td>
+              <div class="upload-box" id="box_mother_photo" onclick="triggerFileSelect('mother_photo')">
+                <svg class="upload-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"></path>
+                  <path d="M12 13v6"></path>
+                  <path d="m9 16 3 3 3-3"></path>
+                </svg>
+                <span class="upload-text">Click to upload</span>
+                <div class="preview-box" id="prevbox_mother_photo">
+                  <img class="preview-img" id="img_mother_photo" alt="Mother Photo" />
+                  <div class="preview-overlay">Replace</div>
+                </div>
+              </div>
+              <input type="file" id="file_mother_photo" class="hidden-input" accept="image/jpeg,image/png,image/webp" onchange="onFileChosen(event, 'mother_photo', 'person')" />
+            </td>
+            <td>
+              <div class="actions-cell" id="actions_mother_photo">
+                <span class="empty-actions-dash">—</span>
+              </div>
+            </td>
+          </tr>
+
+          <!-- ROW 4: Mother Signature -->
+          <tr id="row_mother_sig">
+            <td>
+              <div class="doc-name-cell">
+                <span class="doc-title">Mother Signature</span>
+                <span class="doc-type-hint">Required: Signature</span>
+              </div>
+            </td>
+            <td>
+              <div class="status-cell" id="status_mother_sig">
+                <span class="status-not-uploaded">Not Uploaded</span>
+              </div>
+            </td>
+            <td>
+              <div class="upload-box" id="box_mother_sig" onclick="triggerFileSelect('mother_sig')">
+                <svg class="upload-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"></path>
+                  <path d="M12 13v6"></path>
+                  <path d="m9 16 3 3 3-3"></path>
+                </svg>
+                <span class="upload-text">Click to upload</span>
+                <div class="preview-box" id="prevbox_mother_sig">
+                  <img class="preview-img" id="img_mother_sig" alt="Mother Signature" />
+                  <div class="preview-overlay">Replace</div>
+                </div>
+              </div>
+              <input type="file" id="file_mother_sig" class="hidden-input" accept="image/jpeg,image/png,image/webp" onchange="onFileChosen(event, 'mother_sig', 'signature')" />
+            </td>
+            <td>
+              <div class="actions-cell" id="actions_mother_sig">
+                <span class="empty-actions-dash">—</span>
+              </div>
+            </td>
+          </tr>
+
+          <!-- ROW 5: Student Photo -->
+          <tr id="row_student_photo">
+            <td>
+              <div class="doc-name-cell">
+                <span class="doc-title">Student Photo</span>
+                <span class="doc-type-hint">Required: Person Photo</span>
+              </div>
+            </td>
+            <td>
+              <div class="status-cell" id="status_student_photo">
+                <span class="status-not-uploaded">Not Uploaded</span>
+              </div>
+            </td>
+            <td>
+              <div class="upload-box" id="box_student_photo" onclick="triggerFileSelect('student_photo')">
+                <svg class="upload-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"></path>
+                  <path d="M12 13v6"></path>
+                  <path d="m9 16 3 3 3-3"></path>
+                </svg>
+                <span class="upload-text">Click to upload</span>
+                <div class="preview-box" id="prevbox_student_photo">
+                  <img class="preview-img" id="img_student_photo" alt="Student Photo" />
+                  <div class="preview-overlay">Replace</div>
+                </div>
+              </div>
+              <input type="file" id="file_student_photo" class="hidden-input" accept="image/jpeg,image/png,image/webp" onchange="onFileChosen(event, 'student_photo', 'person')" />
+            </td>
+            <td>
+              <div class="actions-cell" id="actions_student_photo">
+                <span class="empty-actions-dash">—</span>
+              </div>
+            </td>
+          </tr>
+
+          <!-- ROW 6: Student Mark Sheet / Certificate -->
+          <tr id="row_student_doc">
+            <td>
+              <div class="doc-name-cell">
+                <span class="doc-title">Student Mark Sheet / Certificate</span>
+                <span class="doc-type-hint">Required: Document</span>
+              </div>
+            </td>
+            <td>
+              <div class="status-cell" id="status_student_doc">
+                <span class="status-not-uploaded">Not Uploaded</span>
+              </div>
+            </td>
+            <td>
+              <div class="upload-box" id="box_student_doc" onclick="triggerFileSelect('student_doc')">
+                <svg class="upload-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"></path>
+                  <path d="M12 13v6"></path>
+                  <path d="m9 16 3 3 3-3"></path>
+                </svg>
+                <span class="upload-text">Click to upload</span>
+                <div class="preview-box" id="prevbox_student_doc">
+                  <img class="preview-img" id="img_student_doc" alt="Student Document" />
+                  <div class="preview-overlay">Replace</div>
+                </div>
+              </div>
+              <input type="file" id="file_student_doc" class="hidden-input" accept="image/jpeg,image/png,image/webp" onchange="onFileChosen(event, 'student_doc', 'document')" />
+            </td>
+            <td>
+              <div class="actions-cell" id="actions_student_doc">
+                <span class="empty-actions-dash">—</span>
+              </div>
+            </td>
+          </tr>
+
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Summary Bar -->
+    <div class="summary-card">
+      <div class="summary-text" id="summaryStatusText">
+        Uploaded: <strong>0 / 6</strong> documents verified
+      </div>
+      <button class="btn-submit" onclick="checkAllAndSubmit()">Submit All Documents</button>
+    </div>
+
+  </div>
+
+  <!-- Modal for Inspection & Image View -->
+  <div class="modal-overlay" id="inspectModal">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3 class="modal-title" id="modalDocTitle">Document Details</h3>
+        <button class="modal-close" onclick="closeModal()">✕</button>
+      </div>
+      <div class="modal-body">
+        <img id="modalPreviewImg" class="modal-image-preview" src="" alt="Preview" />
+        
+        <div id="modalVerdictBox" style="padding: 10px 14px; border-radius: 8px; margin-bottom: 1rem;">
+          <div id="modalVerdictTitle" style="font-weight: 700; font-size: 0.95rem;"></div>
+          <div id="modalVerdictMsg" style="font-size: 0.82rem; margin-top: 4px; line-height: 1.4;"></div>
+        </div>
+
+        <h4 style="font-size: 0.85rem; font-weight: 600; color: #475569; text-transform: uppercase;">Computer Vision Metrics</h4>
+        <div class="metric-grid">
+          <div class="metric-card">
+            <div class="metric-card-label">Central Skin ROI</div>
+            <div class="metric-card-val" id="valCentralSkin">--</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-card-label">Total Skin Ratio</div>
+            <div class="metric-card-val" id="valTotalSkin">--</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-card-label">White Paper Ratio</div>
+            <div class="metric-card-val" id="valWhiteRatio">--</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-card-label">Horizontal Edge Density</div>
+            <div class="metric-card-val" id="valEdgeDensity">--</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-card-label">Dark Stroke Density</div>
+            <div class="metric-card-val" id="valDarkStroke">--</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-card-label">Dominant Cluster</div>
+            <div class="metric-card-val" id="valDominant">--</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // State storage for uploaded files and results
+    var rowData = {
+      father_photo: { title: "Father Photo", expected: "person", result: null, file: null, previewUrl: null },
+      father_sig: { title: "Father Signature", expected: "signature", result: null, file: null, previewUrl: null },
+      mother_photo: { title: "Mother Photo", expected: "person", result: null, file: null, previewUrl: null },
+      mother_sig: { title: "Mother Signature", expected: "signature", result: null, file: null, previewUrl: null },
+      student_photo: { title: "Student Photo", expected: "person", result: null, file: null, previewUrl: null },
+      student_doc: { title: "Student Mark Sheet", expected: "document", result: null, file: null, previewUrl: null }
+    };
+
+    // Setup drag and drop for all upload boxes
+    Object.keys(rowData).forEach(function(id) {
+      var box = document.getElementById('box_' + id);
+      box.addEventListener('dragover', function(e) { e.preventDefault(); box.classList.add('dragover'); });
+      box.addEventListener('dragleave', function() { box.classList.remove('dragover'); });
+      box.addEventListener('drop', function(e) {
+        e.preventDefault();
+        box.classList.remove('dragover');
+        if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+          uploadAndValidate(id, e.dataTransfer.files[0], rowData[id].expected);
+        }
+      });
+    });
+
+    function triggerFileSelect(id) {
+      document.getElementById('file_' + id).click();
+    }
+
+    function onFileChosen(event, id, expectedType) {
+      if (event.target.files && event.target.files.length > 0) {
+        uploadAndValidate(id, event.target.files[0], expectedType);
+      }
+    }
+
+    async function uploadAndValidate(id, file, expectedType) {
+      // 1. Show image preview inside upload box
+      var previewUrl = URL.createObjectURL(file);
+      rowData[id].file = file;
+      rowData[id].previewUrl = previewUrl;
+
+      var img = document.getElementById('img_' + id);
+      var prevbox = document.getElementById('prevbox_' + id);
+      img.src = previewUrl;
+      prevbox.style.display = 'block';
+
+      // 2. Set Status column to "Validating..."
+      var statusCell = document.getElementById('status_' + id);
+      statusCell.innerHTML = '<span class="status-badge loading">Analyzing...</span>';
+
+      // 3. Send to Python Backend
+      var formData = new FormData();
+      formData.append('file', file);
+      formData.append('doc_type', expectedType);
+
+      try {
+        var resp = await fetch('/api/validate', {
+          method: 'POST',
+          body: formData
+        });
+        var data = await resp.json();
+        rowData[id].result = data;
+
+        renderRowStatus(id, data);
+        updateSummary();
+      } catch (err) {
+        statusCell.innerHTML = '<span class="status-badge rejected">Validation Failed</span><div class="status-message error">' + err.message + '</div>';
+      }
+    }
+
+    function renderRowStatus(id, data) {
+      var statusCell = document.getElementById('status_' + id);
+      var actionsCell = document.getElementById('actions_' + id);
+
+      if (data.isFieldApproved) {
+        statusCell.innerHTML = '<span class="status-badge approved">✅ ' + (data.badgeText || 'Approved') + '</span><div class="status-message success">' + data.message + '</div>';
+      } else {
+        statusCell.innerHTML = '<span class="status-badge rejected">❌ ' + (data.badgeText || 'Rejected: No Face Detected') + '</span><div class="status-message error">' + data.message + '</div>';
+      }
+
+      // Actions column: Details / Clear
+      actionsCell.innerHTML = '<button class="action-btn btn-inspect" onclick="inspectRow(\'' + id + '\')" title="Inspect Metrics">Details</button> <button class="action-btn btn-danger" onclick="clearRow(\'' + id + '\')" title="Remove">Clear</button>';
+    }
+
+    function clearRow(id) {
+      rowData[id].file = null;
+      rowData[id].result = null;
+      rowData[id].previewUrl = null;
+
+      document.getElementById('prevbox_' + id).style.display = 'none';
+      document.getElementById('file_' + id).value = '';
+      document.getElementById('status_' + id).innerHTML = '<span class="status-not-uploaded">Not Uploaded</span>';
+      document.getElementById('actions_' + id).innerHTML = '<span class="empty-actions-dash">—</span>';
+      updateSummary();
+    }
+
+    function resetAllFields() {
+      Object.keys(rowData).forEach(function(id) { clearRow(id); });
+    }
+
+    function updateSummary() {
+      var count = 0;
+      var approvedCount = 0;
+      var total = Object.keys(rowData).length;
+
+      Object.values(rowData).forEach(function(row) {
+        if (row.result) {
+          count++;
+          if (row.result.isFieldApproved) approvedCount++;
+        }
+      });
+
+      var summaryText = document.getElementById('summaryStatusText');
+      if (approvedCount === total) {
+        summaryText.innerHTML = '<span style="color: #059669; font-weight: 600;">All ' + total + ' documents verified & approved!</span>';
+      } else {
+        summaryText.innerHTML = 'Uploaded: <strong>' + count + ' / ' + total + '</strong> | Approved: <strong style="color: ' + (approvedCount > 0 ? '#059669' : '#0f172a') + '">' + approvedCount + '</strong>';
+      }
+    }
+
+    function inspectRow(id) {
+      var row = rowData[id];
+      if (!row || !row.result) return;
+
+      var modal = document.getElementById('inspectModal');
+      document.getElementById('modalDocTitle').textContent = row.title + " Verification";
+      document.getElementById('modalPreviewImg').src = row.previewUrl;
+
+      var vBox = document.getElementById('modalVerdictBox');
+      var vTitle = document.getElementById('modalVerdictTitle');
+      var vMsg = document.getElementById('modalVerdictMsg');
+
+      if (row.result.isFieldApproved) {
+        vBox.style.background = '#ecfdf5';
+        vBox.style.border = '1px solid #a7f3d0';
+        vTitle.style.color = '#059669';
+        vTitle.textContent = row.result.fieldVerdict;
+        vMsg.style.color = '#047857';
+      } else {
+        vBox.style.background = '#fef2f2';
+        vBox.style.border = '1px solid #fecaca';
+        vTitle.style.color = '#dc2626';
+        vTitle.textContent = row.result.fieldVerdict;
+        vMsg.style.color = '#b91c1c';
+      }
+      vMsg.textContent = row.result.message;
+
+      if (row.result.metrics) {
+        var m = row.result.metrics;
+        document.getElementById('valCentralSkin').textContent = (m.central_skin_ratio * 100).toFixed(1) + '%';
+        document.getElementById('valTotalSkin').textContent = (m.skin_ratio * 100).toFixed(1) + '%';
+        document.getElementById('valWhiteRatio').textContent = (m.white_ratio * 100).toFixed(1) + '%';
+        document.getElementById('valEdgeDensity').textContent = (m.horizontal_edge_density * 100).toFixed(1) + '%';
+        document.getElementById('valDarkStroke').textContent = (m.dark_stroke_ratio * 100).toFixed(1) + '%';
+        document.getElementById('valDominant').textContent = m.dominant_color.toUpperCase();
+      }
+
+      modal.style.display = 'flex';
+    }
+
+    function closeModal() {
+      document.getElementById('inspectModal').style.display = 'none';
+    }
+
+    window.onclick = function(event) {
+      var modal = document.getElementById('inspectModal');
+      if (event.target === modal) {
+        modal.style.display = "none";
+      }
+    };
+
+    // Quick Test Functions: auto-fill with appropriate server samples
+    async function loadSampleBlob(filename) {
+      var resp = await fetch('/samples/' + filename);
+      var blob = await resp.blob();
+      return new File([blob], filename, { type: blob.type || 'image/png' });
+    }
+
+    async function quickFillAllValid() {
+      var personFile = await loadSampleBlob('person_portrait.png');
+      var sigFile = await loadSampleBlob('signature.png');
+      var docFile = await loadSampleBlob('document.png');
+
+      await uploadAndValidate('father_photo', personFile, 'person');
+      await uploadAndValidate('father_sig', sigFile, 'signature');
+      await uploadAndValidate('mother_photo', personFile, 'person');
+      await uploadAndValidate('mother_sig', sigFile, 'signature');
+      await uploadAndValidate('student_photo', personFile, 'person');
+      await uploadAndValidate('student_doc', docFile, 'document');
+    }
+
+    async function quickFillRejectionTest() {
+      // Put a signature in Father Photo (should be rejected!)
+      var sigFile = await loadSampleBlob('signature.png');
+      await uploadAndValidate('father_photo', sigFile, 'person');
+
+      // Put a car/object in Mother Photo (should be rejected!)
+      var carFile = await loadSampleBlob('object_car.png');
+      await uploadAndValidate('mother_photo', carFile, 'person');
+
+      // Put a landscape in Mother Signature (should be rejected!)
+      var landscapeFile = await loadSampleBlob('landscape.png');
+      await uploadAndValidate('mother_sig', landscapeFile, 'signature');
+    }
+
+    function checkAllAndSubmit() {
+      var unapproved = [];
+      Object.keys(rowData).forEach(function(id) {
+        var row = rowData[id];
+        if (!row.result || !row.result.isFieldApproved) {
+          unapproved.push(row.title);
+        }
+      });
+
+      if (unapproved.length === 0) {
+        alert("Success! All documents passed AI verification and are ready for submission.");
+      } else {
+        alert("Cannot submit:\nThe following documents are either missing or were rejected by AI:\n• " + unapproved.join("\n• "));
+      }
+    }
+  </script>
+</body>
+</html>
