@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Document & Photo Verification</title>
+  <title>Document & Photo Verification Portal</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -23,7 +23,7 @@
     }
 
     .page-container {
-      max-width: 1050px;
+      max-width: 1100px;
       margin: 0 auto;
     }
 
@@ -38,7 +38,7 @@
     }
 
     .page-title {
-      font-size: 1.5rem;
+      font-size: 1.55rem;
       font-weight: 700;
       color: #0f172a;
       letter-spacing: -0.01em;
@@ -97,6 +97,38 @@
       background: #ddd6fe;
     }
 
+    /* Category Filter Tabs */
+    .category-nav {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 1.25rem;
+      flex-wrap: wrap;
+    }
+
+    .cat-btn {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 20px;
+      padding: 6px 14px;
+      font-size: 0.84rem;
+      font-weight: 500;
+      color: #64748b;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .cat-btn:hover {
+      background: #f1f5f9;
+      color: #0f172a;
+    }
+
+    .cat-btn.active {
+      background: #7c3aed;
+      border-color: #7c3aed;
+      color: #ffffff;
+      font-weight: 600;
+    }
+
     /* Table Card */
     .table-card {
       background: #ffffff;
@@ -118,15 +150,15 @@
       color: #475569;
       font-size: 0.88rem;
       font-weight: 600;
-      padding: 1rem 1.75rem;
+      padding: 1rem 1.5rem;
       border-bottom: 1px solid #e2e8f0;
       letter-spacing: 0.02em;
     }
 
-    .docs-table thead th:nth-child(1) { width: 28%; }
-    .docs-table thead th:nth-child(2) { width: 30%; }
-    .docs-table thead th:nth-child(3) { width: 22%; }
-    .docs-table thead th:nth-child(4) { width: 20%; }
+    .docs-table thead th:nth-child(1) { width: 30%; }
+    .docs-table thead th:nth-child(2) { width: 32%; }
+    .docs-table thead th:nth-child(3) { width: 20%; }
+    .docs-table thead th:nth-child(4) { width: 18%; }
 
     /* Table Rows - Exact warm cream background from user screenshot */
     .docs-table tbody tr {
@@ -144,7 +176,7 @@
     }
 
     .docs-table td {
-      padding: 1.25rem 1.75rem;
+      padding: 1.15rem 1.5rem;
       vertical-align: middle;
     }
 
@@ -156,13 +188,13 @@
     }
 
     .doc-title {
-      font-size: 1rem;
+      font-size: 0.96rem;
       font-weight: 600;
       color: #0f172a;
     }
 
     .doc-type-hint {
-      font-size: 0.75rem;
+      font-size: 0.74rem;
       color: #94a3b8;
       text-transform: uppercase;
       letter-spacing: 0.04em;
@@ -212,7 +244,7 @@
       color: #64748b;
       margin-top: 6px;
       line-height: 1.4;
-      max-width: 280px;
+      max-width: 320px;
     }
 
     .status-message.error {
@@ -265,7 +297,7 @@
       color: #475569;
     }
 
-    /* Thumbnail Preview after upload */
+    /* Thumbnail or File Preview */
     .preview-box {
       display: none;
       width: 100%;
@@ -280,6 +312,19 @@
       width: 100%;
       height: 100%;
       object-fit: cover;
+    }
+
+    .preview-doc-icon {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: #f8fafc;
+      color: #dc2626;
+      font-size: 0.72rem;
+      font-weight: 600;
     }
 
     .preview-overlay {
@@ -414,35 +459,6 @@
       overflow-y: auto;
     }
 
-    .metric-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-      margin: 1rem 0;
-    }
-
-    .metric-card {
-      background: #f8fafc;
-      border: 1px solid #e2e8f0;
-      border-radius: 8px;
-      padding: 10px 14px;
-    }
-
-    .metric-card-label {
-      font-size: 0.72rem;
-      font-weight: 600;
-      color: #64748b;
-      text-transform: uppercase;
-    }
-
-    .metric-card-val {
-      font-size: 1.05rem;
-      font-weight: 700;
-      color: #0f172a;
-      margin-top: 2px;
-      font-family: monospace;
-    }
-
     .modal-image-preview {
       width: 100%;
       max-height: 280px;
@@ -504,15 +520,27 @@
     <div class="page-header">
       <div>
         <h1 class="page-title">Document & Photo Verification</h1>
-        <p class="page-subtitle">Upload family photos and signatures to verify validity.</p>
+        <p class="page-subtitle">Upload family photos, Aadhaar cards, and certificates (PDF, DOCX, or Image).</p>
       </div>
 
       <div class="preset-toolbar">
         <span class="toolbar-label">Quick Test:</span>
-        <button class="btn-quick-fill accent" onclick="quickFillAllValid()">Auto-fill All Valid</button>
-        <button class="btn-quick-fill" onclick="quickFillRejectionTest()">Test Wrong Uploads</button>
-        <button class="btn-quick-fill" onclick="resetAllFields()">Reset</button>
+        <button class="btn-quick-fill accent" onclick="testValidBirthCert()">Test Valid Birth Cert</button>
+        <button class="btn-quick-fill" onclick="testRandomInBirthCert()">Test Random Doc in Birth Cert</button>
+        <button class="btn-quick-fill accent" onclick="testValidTC()">Test Valid TC</button>
+        <button class="btn-quick-fill" onclick="testRandomInTC()">Test Random Doc in TC</button>
+        <button class="btn-quick-fill" onclick="testValidAadhaar()">Test Valid Aadhaar</button>
+        <button class="btn-quick-fill" onclick="resetAllFields()">Reset All</button>
       </div>
+    </div>
+
+    <!-- Category Filter Tabs -->
+    <div class="category-nav">
+      <button class="cat-btn active" onclick="filterCategory('all', this)">All Documents (17)</button>
+      <button class="cat-btn" onclick="filterCategory('aadhar', this)">Aadhaar Cards (3)</button>
+      <button class="cat-btn" onclick="filterCategory('photo', this)">Photos & Signatures (5)</button>
+      <button class="cat-btn" onclick="filterCategory('academic', this)">Academic & School Certificates (5)</button>
+      <button class="cat-btn" onclick="filterCategory('category', this)">Category & Other Proofs (4)</button>
     </div>
 
     <!-- Main Table Card -->
@@ -526,218 +554,8 @@
             <th>Actions</th>
           </tr>
         </thead>
-        <tbody>
-
-          <!-- ROW 1: Father Photo -->
-          <tr id="row_father_photo">
-            <td>
-              <div class="doc-name-cell">
-                <span class="doc-title">Father Photo</span>
-                <span class="doc-type-hint">Required: Person Photo</span>
-              </div>
-            </td>
-            <td>
-              <div class="status-cell" id="status_father_photo">
-                <span class="status-not-uploaded">Not Uploaded</span>
-              </div>
-            </td>
-            <td>
-              <div class="upload-box" id="box_father_photo" onclick="triggerFileSelect('father_photo')">
-                <svg class="upload-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"></path>
-                  <path d="M12 13v6"></path>
-                  <path d="m9 16 3 3 3-3"></path>
-                </svg>
-                <span class="upload-text">Click to upload</span>
-                <div class="preview-box" id="prevbox_father_photo">
-                  <img class="preview-img" id="img_father_photo" alt="Father Photo" />
-                  <div class="preview-overlay">Replace</div>
-                </div>
-              </div>
-              <input type="file" id="file_father_photo" class="hidden-input" accept="image/jpeg,image/png,image/webp" onchange="onFileChosen(event, 'father_photo', 'person')" />
-            </td>
-            <td>
-              <div class="actions-cell" id="actions_father_photo">
-                <span class="empty-actions-dash">—</span>
-              </div>
-            </td>
-          </tr>
-
-          <!-- ROW 2: Father Signature -->
-          <tr id="row_father_sig">
-            <td>
-              <div class="doc-name-cell">
-                <span class="doc-title">Father Signature</span>
-                <span class="doc-type-hint">Required: Signature</span>
-              </div>
-            </td>
-            <td>
-              <div class="status-cell" id="status_father_sig">
-                <span class="status-not-uploaded">Not Uploaded</span>
-              </div>
-            </td>
-            <td>
-              <div class="upload-box" id="box_father_sig" onclick="triggerFileSelect('father_sig')">
-                <svg class="upload-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"></path>
-                  <path d="M12 13v6"></path>
-                  <path d="m9 16 3 3 3-3"></path>
-                </svg>
-                <span class="upload-text">Click to upload</span>
-                <div class="preview-box" id="prevbox_father_sig">
-                  <img class="preview-img" id="img_father_sig" alt="Father Signature" />
-                  <div class="preview-overlay">Replace</div>
-                </div>
-              </div>
-              <input type="file" id="file_father_sig" class="hidden-input" accept="image/jpeg,image/png,image/webp" onchange="onFileChosen(event, 'father_sig', 'signature')" />
-            </td>
-            <td>
-              <div class="actions-cell" id="actions_father_sig">
-                <span class="empty-actions-dash">—</span>
-              </div>
-            </td>
-          </tr>
-
-          <!-- ROW 3: Mother Photo -->
-          <tr id="row_mother_photo">
-            <td>
-              <div class="doc-name-cell">
-                <span class="doc-title">Mother Photo</span>
-                <span class="doc-type-hint">Required: Person Photo</span>
-              </div>
-            </td>
-            <td>
-              <div class="status-cell" id="status_mother_photo">
-                <span class="status-not-uploaded">Not Uploaded</span>
-              </div>
-            </td>
-            <td>
-              <div class="upload-box" id="box_mother_photo" onclick="triggerFileSelect('mother_photo')">
-                <svg class="upload-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"></path>
-                  <path d="M12 13v6"></path>
-                  <path d="m9 16 3 3 3-3"></path>
-                </svg>
-                <span class="upload-text">Click to upload</span>
-                <div class="preview-box" id="prevbox_mother_photo">
-                  <img class="preview-img" id="img_mother_photo" alt="Mother Photo" />
-                  <div class="preview-overlay">Replace</div>
-                </div>
-              </div>
-              <input type="file" id="file_mother_photo" class="hidden-input" accept="image/jpeg,image/png,image/webp" onchange="onFileChosen(event, 'mother_photo', 'person')" />
-            </td>
-            <td>
-              <div class="actions-cell" id="actions_mother_photo">
-                <span class="empty-actions-dash">—</span>
-              </div>
-            </td>
-          </tr>
-
-          <!-- ROW 4: Mother Signature -->
-          <tr id="row_mother_sig">
-            <td>
-              <div class="doc-name-cell">
-                <span class="doc-title">Mother Signature</span>
-                <span class="doc-type-hint">Required: Signature</span>
-              </div>
-            </td>
-            <td>
-              <div class="status-cell" id="status_mother_sig">
-                <span class="status-not-uploaded">Not Uploaded</span>
-              </div>
-            </td>
-            <td>
-              <div class="upload-box" id="box_mother_sig" onclick="triggerFileSelect('mother_sig')">
-                <svg class="upload-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"></path>
-                  <path d="M12 13v6"></path>
-                  <path d="m9 16 3 3 3-3"></path>
-                </svg>
-                <span class="upload-text">Click to upload</span>
-                <div class="preview-box" id="prevbox_mother_sig">
-                  <img class="preview-img" id="img_mother_sig" alt="Mother Signature" />
-                  <div class="preview-overlay">Replace</div>
-                </div>
-              </div>
-              <input type="file" id="file_mother_sig" class="hidden-input" accept="image/jpeg,image/png,image/webp" onchange="onFileChosen(event, 'mother_sig', 'signature')" />
-            </td>
-            <td>
-              <div class="actions-cell" id="actions_mother_sig">
-                <span class="empty-actions-dash">—</span>
-              </div>
-            </td>
-          </tr>
-
-          <!-- ROW 5: Student Photo -->
-          <tr id="row_student_photo">
-            <td>
-              <div class="doc-name-cell">
-                <span class="doc-title">Student Photo</span>
-                <span class="doc-type-hint">Required: Person Photo</span>
-              </div>
-            </td>
-            <td>
-              <div class="status-cell" id="status_student_photo">
-                <span class="status-not-uploaded">Not Uploaded</span>
-              </div>
-            </td>
-            <td>
-              <div class="upload-box" id="box_student_photo" onclick="triggerFileSelect('student_photo')">
-                <svg class="upload-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"></path>
-                  <path d="M12 13v6"></path>
-                  <path d="m9 16 3 3 3-3"></path>
-                </svg>
-                <span class="upload-text">Click to upload</span>
-                <div class="preview-box" id="prevbox_student_photo">
-                  <img class="preview-img" id="img_student_photo" alt="Student Photo" />
-                  <div class="preview-overlay">Replace</div>
-                </div>
-              </div>
-              <input type="file" id="file_student_photo" class="hidden-input" accept="image/jpeg,image/png,image/webp" onchange="onFileChosen(event, 'student_photo', 'person')" />
-            </td>
-            <td>
-              <div class="actions-cell" id="actions_student_photo">
-                <span class="empty-actions-dash">—</span>
-              </div>
-            </td>
-          </tr>
-
-          <!-- ROW 6: Student Mark Sheet / Certificate -->
-          <tr id="row_student_doc">
-            <td>
-              <div class="doc-name-cell">
-                <span class="doc-title">Student Mark Sheet / Certificate</span>
-                <span class="doc-type-hint">Required: Document</span>
-              </div>
-            </td>
-            <td>
-              <div class="status-cell" id="status_student_doc">
-                <span class="status-not-uploaded">Not Uploaded</span>
-              </div>
-            </td>
-            <td>
-              <div class="upload-box" id="box_student_doc" onclick="triggerFileSelect('student_doc')">
-                <svg class="upload-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"></path>
-                  <path d="M12 13v6"></path>
-                  <path d="m9 16 3 3 3-3"></path>
-                </svg>
-                <span class="upload-text">Click to upload</span>
-                <div class="preview-box" id="prevbox_student_doc">
-                  <img class="preview-img" id="img_student_doc" alt="Student Document" />
-                  <div class="preview-overlay">Replace</div>
-                </div>
-              </div>
-              <input type="file" id="file_student_doc" class="hidden-input" accept="image/jpeg,image/png,image/webp" onchange="onFileChosen(event, 'student_doc', 'document')" />
-            </td>
-            <td>
-              <div class="actions-cell" id="actions_student_doc">
-                <span class="empty-actions-dash">—</span>
-              </div>
-            </td>
-          </tr>
-
+        <tbody id="tableBody">
+          <!-- Dynamically populated or rendered rows -->
         </tbody>
       </table>
     </div>
@@ -745,7 +563,7 @@
     <!-- Summary Bar -->
     <div class="summary-card">
       <div class="summary-text" id="summaryStatusText">
-        Uploaded: <strong>0 / 6</strong> documents verified
+        Uploaded: <strong>0 / 17</strong> documents verified
       </div>
       <button class="btn-submit" onclick="checkAllAndSubmit()">Submit All Documents</button>
     </div>
@@ -760,106 +578,202 @@
         <button class="modal-close" onclick="closeModal()">✕</button>
       </div>
       <div class="modal-body">
-        <img id="modalPreviewImg" class="modal-image-preview" src="" alt="Preview" />
+        <div id="modalPreviewArea" style="text-align: center; margin-bottom: 1rem;">
+          <img id="modalPreviewImg" class="modal-image-preview" src="" alt="Preview" style="display:none;" />
+          <div id="modalDocBadge" style="display:none; padding: 2rem; background: #f8fafc; border-radius: 8px; font-weight: 600; color: #64748b;">
+            📄 PDF / Document File Verified
+          </div>
+        </div>
         
         <div id="modalVerdictBox" style="padding: 10px 14px; border-radius: 8px; margin-bottom: 1rem;">
           <div id="modalVerdictTitle" style="font-weight: 700; font-size: 0.95rem;"></div>
           <div id="modalVerdictMsg" style="font-size: 0.82rem; margin-top: 4px; line-height: 1.4;"></div>
         </div>
 
-        <h4 style="font-size: 0.85rem; font-weight: 600; color: #475569; text-transform: uppercase;">Computer Vision Metrics</h4>
-        <div class="metric-grid">
-          <div class="metric-card">
-            <div class="metric-card-label">Central Skin ROI</div>
-            <div class="metric-card-val" id="valCentralSkin">--</div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-card-label">Total Skin Ratio</div>
-            <div class="metric-card-val" id="valTotalSkin">--</div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-card-label">White Paper Ratio</div>
-            <div class="metric-card-val" id="valWhiteRatio">--</div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-card-label">Horizontal Edge Density</div>
-            <div class="metric-card-val" id="valEdgeDensity">--</div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-card-label">Dark Stroke Density</div>
-            <div class="metric-card-val" id="valDarkStroke">--</div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-card-label">Dominant Cluster</div>
-            <div class="metric-card-val" id="valDominant">--</div>
-          </div>
+        <div id="modalDetailsText" style="font-size: 0.82rem; color: #64748b; background: #f8fafc; padding: 12px; border-radius: 8px; border: 1px solid #e2e8f0; line-height: 1.5;">
+          Content extracted & verified by AI validation engine.
         </div>
       </div>
     </div>
   </div>
 
   <script>
-    // State storage for uploaded files and results
-    var rowData = {
-      father_photo: { title: "Father Photo", expected: "person", result: null, file: null, previewUrl: null },
-      father_sig: { title: "Father Signature", expected: "signature", result: null, file: null, previewUrl: null },
-      mother_photo: { title: "Mother Photo", expected: "person", result: null, file: null, previewUrl: null },
-      mother_sig: { title: "Mother Signature", expected: "signature", result: null, file: null, previewUrl: null },
-      student_photo: { title: "Student Photo", expected: "person", result: null, file: null, previewUrl: null },
-      student_doc: { title: "Student Mark Sheet", expected: "document", result: null, file: null, previewUrl: null }
-    };
+    // Master list of all documents requested
+    var documentsConfig = [
+      // 1. Photos & Signatures
+      { id: "father_photo", title: "Father Photo", expected: "person", category: "photo", hint: "Required: Person Photo (JPG/PNG)" },
+      { id: "father_sig", title: "Father Signature", expected: "signature", category: "photo", hint: "Required: Signature (JPG/PNG)" },
+      { id: "mother_photo", title: "Mother Photo", expected: "person", category: "photo", hint: "Required: Person Photo (JPG/PNG)" },
+      { id: "mother_sig", title: "Mother Signature", expected: "signature", category: "photo", hint: "Required: Signature (JPG/PNG)" },
+      { id: "student_photo", title: "Student Photo", expected: "person", category: "photo", hint: "Required: Person Photo (JPG/PNG)" },
 
-    // Setup drag and drop for all upload boxes
-    Object.keys(rowData).forEach(function(id) {
-      var box = document.getElementById('box_' + id);
-      box.addEventListener('dragover', function(e) { e.preventDefault(); box.classList.add('dragover'); });
-      box.addEventListener('dragleave', function() { box.classList.remove('dragover'); });
-      box.addEventListener('drop', function(e) {
-        e.preventDefault();
-        box.classList.remove('dragover');
-        if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
-          uploadAndValidate(id, e.dataTransfer.files[0], rowData[id].expected);
+      // 2. Aadhaar Cards
+      { id: "student_aadhar", title: "Student Aadhar Card", expected: "student_aadhar", category: "aadhar", hint: "Required: Aadhaar Card (PDF / Image)" },
+      { id: "father_aadhar", title: "Father Aadhar Card", expected: "father_aadhar", category: "aadhar", hint: "Required: Aadhaar Card (PDF / Image)" },
+      { id: "mother_aadhar", title: "Mother Aadhar Card", expected: "mother_aadhar", category: "aadhar", hint: "Required: Aadhaar Card (PDF / Image)" },
+
+      // 3. Academic & School Certificates
+      { id: "birth_cert", title: "Birth Certificate", expected: "birth_certificate", category: "academic", hint: "Required: Birth Certificate (PDF / Image)" },
+      { id: "tc", title: "Transfer Certificate (TC)", expected: "tc", category: "academic", hint: "Original from previous school (PDF / Image)" },
+      { id: "marksheet", title: "Previous Examination Marksheet / Report Card", expected: "marksheet", category: "academic", hint: "Report Card / Statement of Marks (PDF / Image)" },
+      { id: "study_cert", title: "Study & Conduct Certificate", expected: "study_certificate", category: "academic", hint: "Bonafide / Study Certificate (PDF / Image)" },
+      { id: "migration_cert", title: "Migration Certificate", expected: "migration_certificate", category: "academic", hint: "Board / Council Certificate (PDF / Image)" },
+
+      // 4. Category & Other Proofs
+      { id: "caste_cert", title: "Caste Certificate", expected: "caste_certificate", category: "category", hint: "Community Certificate (PDF / Image)" },
+      { id: "income_cert", title: "Income Certificate", expected: "income_certificate", category: "category", hint: "Annual Family Income Certificate (PDF / Image)" },
+      { id: "medical_cert", title: "Medical / Health / Vaccination Certificate", expected: "medical_certificate", category: "category", hint: "Fitness / Immunization Record (PDF / Image)" },
+      { id: "address_proof", title: "Address Proof / Ration Card / Utility Bill", expected: "address_proof", category: "category", hint: "Electricity Bill, Ration Card, etc. (PDF / Image)" }
+    ];
+
+    var rowData = {};
+
+    function renderTableRows() {
+      var tbody = document.getElementById("tableBody");
+      tbody.innerHTML = "";
+
+      documentsConfig.forEach(function(doc) {
+        if (!rowData[doc.id]) {
+          rowData[doc.id] = {
+            id: doc.id,
+            title: doc.title,
+            expected: doc.expected,
+            category: doc.category,
+            result: null,
+            file: null,
+            previewUrl: null,
+            isPdf: false
+          };
         }
-      });
-    });
 
-    function triggerFileSelect(id) {
-      document.getElementById('file_' + id).click();
+        var tr = document.createElement("tr");
+        tr.id = "row_" + doc.id;
+        tr.setAttribute("data-category", doc.category);
+
+        tr.innerHTML = `
+          <td>
+            <div class="doc-name-cell">
+              <span class="doc-title">${doc.title}</span>
+              <span class="doc-type-hint">${doc.hint}</span>
+            </div>
+          </td>
+          <td>
+            <div class="status-cell" id="status_${doc.id}">
+              <span class="status-not-uploaded">Not Uploaded</span>
+            </div>
+          </td>
+          <td>
+            <div class="upload-box" id="box_${doc.id}" onclick="triggerFileSelect('${doc.id}')">
+              <svg class="upload-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"></path>
+                <path d="M12 13v6"></path>
+                <path d="m9 16 3 3 3-3"></path>
+              </svg>
+              <span class="upload-text">Click to upload</span>
+              <div class="preview-box" id="prevbox_${doc.id}">
+                <img class="preview-img" id="img_${doc.id}" alt="${doc.title}" style="display:none;" />
+                <div class="preview-doc-icon" id="pdfbadge_${doc.id}" style="display:none;">
+                  <span style="font-size: 1.4rem;">📄</span>
+                  <span>PDF FILE</span>
+                </div>
+                <div class="preview-overlay">Replace</div>
+              </div>
+            </div>
+            <input type="file" id="file_${doc.id}" class="hidden-input" accept="image/jpeg,image/png,image/webp,application/pdf,.doc,.docx" onchange="onFileChosen(event, '${doc.id}')" />
+          </td>
+          <td>
+            <div class="actions-cell" id="actions_${doc.id}">
+              <span class="empty-actions-dash">—</span>
+            </div>
+          </td>
+        `;
+
+        tbody.appendChild(tr);
+
+        // Bind drag and drop
+        setTimeout(function() {
+          var box = document.getElementById("box_" + doc.id);
+          if (box) {
+            box.addEventListener("dragover", function(e) { e.preventDefault(); box.classList.add("dragover"); });
+            box.addEventListener("dragleave", function() { box.classList.remove("dragover"); });
+            box.addEventListener("drop", function(e) {
+              e.preventDefault();
+              box.classList.remove("dragover");
+              if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+                uploadAndValidate(doc.id, e.dataTransfer.files[0]);
+              }
+            });
+          }
+        }, 10);
+      });
     }
 
-    function onFileChosen(event, id, expectedType) {
+    function filterCategory(cat, btn) {
+      document.querySelectorAll(".cat-btn").forEach(function(b) { b.classList.remove("active"); });
+      btn.classList.add("active");
+
+      document.querySelectorAll("#tableBody tr").forEach(function(row) {
+        if (cat === "all" || row.getAttribute("data-category") === cat) {
+          row.style.display = "";
+        } else {
+          row.style.display = "none";
+        }
+      });
+    }
+
+    function triggerFileSelect(id) {
+      document.getElementById("file_" + id).click();
+    }
+
+    function onFileChosen(event, id) {
       if (event.target.files && event.target.files.length > 0) {
-        uploadAndValidate(id, event.target.files[0], expectedType);
+        uploadAndValidate(id, event.target.files[0]);
       }
     }
 
-    async function uploadAndValidate(id, file, expectedType) {
-      // 1. Show image preview inside upload box
-      var previewUrl = URL.createObjectURL(file);
-      rowData[id].file = file;
-      rowData[id].previewUrl = previewUrl;
+    async function uploadAndValidate(id, file) {
+      var item = rowData[id];
+      var isPdf = file.name.toLowerCase().endsWith(".pdf") || file.type === "application/pdf";
+      var isDocx = file.name.toLowerCase().endsWith(".docx") || file.name.toLowerCase().endsWith(".doc");
 
-      var img = document.getElementById('img_' + id);
-      var prevbox = document.getElementById('prevbox_' + id);
-      img.src = previewUrl;
-      prevbox.style.display = 'block';
+      item.file = file;
+      item.isPdf = isPdf || isDocx;
 
-      // 2. Set Status column to "Validating..."
-      var statusCell = document.getElementById('status_' + id);
-      statusCell.innerHTML = '<span class="status-badge loading">Analyzing...</span>';
+      var prevbox = document.getElementById("prevbox_" + id);
+      var img = document.getElementById("img_" + id);
+      var pdfBadge = document.getElementById("pdfbadge_" + id);
 
-      // 3. Send to Python Backend
+      if (isPdf || isDocx) {
+        img.style.display = "none";
+        pdfBadge.style.display = "flex";
+        pdfBadge.querySelector("span:last-child").textContent = isPdf ? "PDF FILE" : "DOCX FILE";
+        item.previewUrl = null;
+      } else {
+        var previewUrl = URL.createObjectURL(file);
+        item.previewUrl = previewUrl;
+        img.src = previewUrl;
+        img.style.display = "block";
+        pdfBadge.style.display = "none";
+      }
+      prevbox.style.display = "block";
+
+      // Status: Analyzing
+      var statusCell = document.getElementById("status_" + id);
+      statusCell.innerHTML = '<span class="status-badge loading">Analyzing Document...</span>';
+
+      // Send to Backend
       var formData = new FormData();
-      formData.append('file', file);
-      formData.append('doc_type', expectedType);
+      formData.append("file", file);
+      formData.append("doc_type", item.expected);
+      formData.append("field_name", id);
 
       try {
-        var resp = await fetch('/api/validate', {
-          method: 'POST',
+        var resp = await fetch("/api/validate", {
+          method: "POST",
           body: formData
         });
         var data = await resp.json();
-        rowData[id].result = data;
+        item.result = data;
 
         renderRowStatus(id, data);
         updateSummary();
@@ -869,28 +783,28 @@
     }
 
     function renderRowStatus(id, data) {
-      var statusCell = document.getElementById('status_' + id);
-      var actionsCell = document.getElementById('actions_' + id);
+      var statusCell = document.getElementById("status_" + id);
+      var actionsCell = document.getElementById("actions_" + id);
 
-      if (data.isFieldApproved) {
+      if (data.allowed) {
         statusCell.innerHTML = '<span class="status-badge approved">✅ ' + (data.badgeText || 'Approved') + '</span><div class="status-message success">' + data.message + '</div>';
       } else {
-        statusCell.innerHTML = '<span class="status-badge rejected">❌ ' + (data.badgeText || 'Rejected: No Face Detected') + '</span><div class="status-message error">' + data.message + '</div>';
+        statusCell.innerHTML = '<span class="status-badge rejected">❌ ' + (data.badgeText || 'Rejected') + '</span><div class="status-message error">' + data.message + '</div>';
       }
 
-      // Actions column: Details / Clear
       actionsCell.innerHTML = '<button class="action-btn btn-inspect" onclick="inspectRow(\'' + id + '\')" title="Inspect Metrics">Details</button> <button class="action-btn btn-danger" onclick="clearRow(\'' + id + '\')" title="Remove">Clear</button>';
     }
 
     function clearRow(id) {
-      rowData[id].file = null;
-      rowData[id].result = null;
-      rowData[id].previewUrl = null;
+      var item = rowData[id];
+      item.file = null;
+      item.result = null;
+      item.previewUrl = null;
 
-      document.getElementById('prevbox_' + id).style.display = 'none';
-      document.getElementById('file_' + id).value = '';
-      document.getElementById('status_' + id).innerHTML = '<span class="status-not-uploaded">Not Uploaded</span>';
-      document.getElementById('actions_' + id).innerHTML = '<span class="empty-actions-dash">—</span>';
+      document.getElementById("prevbox_" + id).style.display = "none";
+      document.getElementById("file_" + id).value = "";
+      document.getElementById("status_" + id).innerHTML = '<span class="status-not-uploaded">Not Uploaded</span>';
+      document.getElementById("actions_" + id).innerHTML = '<span class="empty-actions-dash">—</span>';
       updateSummary();
     }
 
@@ -903,14 +817,14 @@
       var approvedCount = 0;
       var total = Object.keys(rowData).length;
 
-      Object.values(rowData).forEach(function(row) {
-        if (row.result) {
+      Object.values(rowData).forEach(function(item) {
+        if (item.result) {
           count++;
-          if (row.result.isFieldApproved) approvedCount++;
+          if (item.result.allowed) approvedCount++;
         }
       });
 
-      var summaryText = document.getElementById('summaryStatusText');
+      var summaryText = document.getElementById("summaryStatusText");
       if (approvedCount === total) {
         summaryText.innerHTML = '<span style="color: #059669; font-weight: 600;">All ' + total + ' documents verified & approved!</span>';
       } else {
@@ -919,96 +833,115 @@
     }
 
     function inspectRow(id) {
-      var row = rowData[id];
-      if (!row || !row.result) return;
+      var item = rowData[id];
+      if (!item || !item.result) return;
 
-      var modal = document.getElementById('inspectModal');
-      document.getElementById('modalDocTitle').textContent = row.title + " Verification";
-      document.getElementById('modalPreviewImg').src = row.previewUrl;
+      var modal = document.getElementById("inspectModal");
+      document.getElementById("modalDocTitle").textContent = item.title + " Verification";
 
-      var vBox = document.getElementById('modalVerdictBox');
-      var vTitle = document.getElementById('modalVerdictTitle');
-      var vMsg = document.getElementById('modalVerdictMsg');
+      var modalImg = document.getElementById("modalPreviewImg");
+      var modalDocBadge = document.getElementById("modalDocBadge");
 
-      if (row.result.isFieldApproved) {
-        vBox.style.background = '#ecfdf5';
-        vBox.style.border = '1px solid #a7f3d0';
-        vTitle.style.color = '#059669';
-        vTitle.textContent = row.result.fieldVerdict;
-        vMsg.style.color = '#047857';
+      if (item.previewUrl) {
+        modalImg.src = item.previewUrl;
+        modalImg.style.display = "block";
+        modalDocBadge.style.display = "none";
       } else {
-        vBox.style.background = '#fef2f2';
-        vBox.style.border = '1px solid #fecaca';
-        vTitle.style.color = '#dc2626';
-        vTitle.textContent = row.result.fieldVerdict;
-        vMsg.style.color = '#b91c1c';
-      }
-      vMsg.textContent = row.result.message;
-
-      if (row.result.metrics) {
-        var m = row.result.metrics;
-        document.getElementById('valCentralSkin').textContent = (m.central_skin_ratio * 100).toFixed(1) + '%';
-        document.getElementById('valTotalSkin').textContent = (m.skin_ratio * 100).toFixed(1) + '%';
-        document.getElementById('valWhiteRatio').textContent = (m.white_ratio * 100).toFixed(1) + '%';
-        document.getElementById('valEdgeDensity').textContent = (m.horizontal_edge_density * 100).toFixed(1) + '%';
-        document.getElementById('valDarkStroke').textContent = (m.dark_stroke_ratio * 100).toFixed(1) + '%';
-        document.getElementById('valDominant').textContent = m.dominant_color.toUpperCase();
+        modalImg.style.display = "none";
+        modalDocBadge.style.display = "block";
+        modalDocBadge.textContent = "📄 " + (item.file ? item.file.name : "Document File");
       }
 
-      modal.style.display = 'flex';
+      var vBox = document.getElementById("modalVerdictBox");
+      var vTitle = document.getElementById("modalVerdictTitle");
+      var vMsg = document.getElementById("modalVerdictMsg");
+
+      if (item.result.allowed) {
+        vBox.style.background = "#ecfdf5";
+        vBox.style.border = "1px solid #a7f3d0";
+        vTitle.style.color = "#059669";
+        vTitle.textContent = "✅ " + item.result.badgeText;
+        vMsg.style.color = "#047857";
+      } else {
+        vBox.style.background = "#fef2f2";
+        vBox.style.border = "1px solid #fecaca";
+        vTitle.style.color = "#dc2626";
+        vTitle.textContent = "❌ " + item.result.badgeText;
+        vMsg.style.color = "#b91c1c";
+      }
+      vMsg.textContent = item.result.message;
+
+      var detailsText = document.getElementById("modalDetailsText");
+      detailsText.textContent = "Detected Type: " + item.result.detectedType + " | Confidence: " + Math.round(item.result.confidence * 100) + "% | Field: " + item.expected;
+
+      modal.style.display = "flex";
     }
 
     function closeModal() {
-      document.getElementById('inspectModal').style.display = 'none';
+      document.getElementById("inspectModal").style.display = "none";
     }
 
     window.onclick = function(event) {
-      var modal = document.getElementById('inspectModal');
+      var modal = document.getElementById("inspectModal");
       if (event.target === modal) {
         modal.style.display = "none";
       }
     };
 
-    // Quick Test Functions: auto-fill with appropriate server samples
+    // Quick Test Functions
     async function loadSampleBlob(filename) {
-      var resp = await fetch('/samples/' + filename);
+      var resp = await fetch("/samples/" + filename);
       var blob = await resp.blob();
-      return new File([blob], filename, { type: blob.type || 'image/png' });
+      return new File([blob], filename, { type: blob.type || (filename.endsWith('.pdf') ? 'application/pdf' : 'image/png') });
     }
 
-    async function quickFillAllValid() {
-      var personFile = await loadSampleBlob('person_portrait.png');
-      var sigFile = await loadSampleBlob('signature.png');
-      var docFile = await loadSampleBlob('document.png');
-
-      await uploadAndValidate('father_photo', personFile, 'person');
-      await uploadAndValidate('father_sig', sigFile, 'signature');
-      await uploadAndValidate('mother_photo', personFile, 'person');
-      await uploadAndValidate('mother_sig', sigFile, 'signature');
-      await uploadAndValidate('student_photo', personFile, 'person');
-      await uploadAndValidate('student_doc', docFile, 'document');
+    async function testValidBirthCert() {
+      var birthPdf = await loadSampleBlob("sample_birth_certificate.pdf");
+      await uploadAndValidate("birth_cert", birthPdf);
     }
 
-    async function quickFillRejectionTest() {
-      // Put a signature in Father Photo (should be rejected!)
-      var sigFile = await loadSampleBlob('signature.png');
-      await uploadAndValidate('father_photo', sigFile, 'person');
+    async function testRandomInBirthCert() {
+      // Upload random document (e.g. utility bill) to Birth Certificate - MUST BE REJECTED!
+      var billPdf = await loadSampleBlob("sample_utility_bill.pdf");
+      await uploadAndValidate("birth_cert", billPdf);
+    }
 
-      // Put a car/object in Mother Photo (should be rejected!)
-      var carFile = await loadSampleBlob('object_car.png');
-      await uploadAndValidate('mother_photo', carFile, 'person');
+    async function testValidTC() {
+      var tcPdf = await loadSampleBlob("sample_transfer_certificate.pdf");
+      await uploadAndValidate("tc", tcPdf);
+    }
 
-      // Put a landscape in Mother Signature (should be rejected!)
-      var landscapeFile = await loadSampleBlob('landscape.png');
-      await uploadAndValidate('mother_sig', landscapeFile, 'signature');
+    async function testRandomInTC() {
+      // Upload random document to TC - MUST BE REJECTED!
+      var billPdf = await loadSampleBlob("sample_utility_bill.pdf");
+      await uploadAndValidate("tc", billPdf);
+    }
+
+    async function testValidAadhaar() {
+      var aadhaarPdf = await loadSampleBlob("sample_aadhaar.pdf");
+      await uploadAndValidate("student_aadhar", aadhaarPdf);
+      await uploadAndValidate("father_aadhar", aadhaarPdf);
+      await uploadAndValidate("mother_aadhar", aadhaarPdf);
+    }
+
+    async function testWrongAadhaarUpload() {
+      // Upload utility bill to Student Aadhar (should reject!)
+      var billPdf = await loadSampleBlob("sample_utility_bill.pdf");
+      await uploadAndValidate("student_aadhar", billPdf);
+    }
+
+    async function testPhotoInAadhaar() {
+      // Upload person portrait photo to Father Aadhar (should reject with photo detected!)
+      var photo = await loadSampleBlob("person_portrait.png");
+      await uploadAndValidate("father_aadhar", photo);
     }
 
     function checkAllAndSubmit() {
       var unapproved = [];
       Object.keys(rowData).forEach(function(id) {
-        var row = rowData[id];
-        if (!row.result || !row.result.isFieldApproved) {
-          unapproved.push(row.title);
+        var item = rowData[id];
+        if (!item.result || !item.result.allowed) {
+          unapproved.push(item.title);
         }
       });
 
@@ -1018,6 +951,9 @@
         alert("Cannot submit:\nThe following documents are either missing or were rejected by AI:\n• " + unapproved.join("\n• "));
       }
     }
+
+    // Initialize Table
+    renderTableRows();
   </script>
 </body>
 </html>

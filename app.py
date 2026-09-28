@@ -140,7 +140,7 @@ async def validate_file(
             badge_text = "Rejected: No Face Detected"
             custom_message = "AI didn't detect a face. Please upload a clear photo of the person."
 
-    elif expected == "signature":
+    elif expected in ["signature"]:
         # Requires signature
         if detected == "signature":
             allowed = True
@@ -158,30 +158,15 @@ async def validate_file(
             else:
                 custom_message = f"AI detected {detected} instead of a signature. Please upload a clear signature on white paper."
 
-    elif expected == "document":
-        # Requires document
-        if detected == "document":
-            allowed = True
-            status_label = "APPROVED"
-            badge_text = "Approved (Document)"
-            custom_message = "Valid document / mark sheet detected."
-        else:
-            allowed = False
-            status_label = "REJECTED"
-            badge_text = "Rejected (Not a Document)"
-            if detected == "person":
-                custom_message = "AI detected a person photo instead of a document. Please upload the certificate or marksheet."
-            elif detected == "signature":
-                custom_message = "AI detected a signature instead of a full document. Please upload the complete document."
-            else:
-                custom_message = f"AI detected {detected} instead of a document. Please upload a valid document or certificate."
-
     else:
-        # Generic fallback
-        allowed = result.is_valid
-        status_label = "APPROVED" if allowed else "REJECTED"
-        badge_text = "Approved" if allowed else "Rejected"
-        custom_message = result.message
+        # All Certificate & Document Fields (Aadhaar, TC, Marksheet, Birth Certificate, etc.)
+        from photo_validator.document_verifier import verify_document_upload
+        doc_result = verify_document_upload(content, filename=file.filename, doc_type=expected)
+        allowed = doc_result["allowed"]
+        status_label = doc_result["status"]
+        badge_text = doc_result["badgeText"]
+        custom_message = doc_result["message"]
+        detected = doc_result.get("detectedType", detected)
 
     # Format response payload
     response_payload = {
